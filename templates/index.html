@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LevelUp Journal</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f6f9;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2em;
+      color: #4a90e2;
+    }
+
+    label {
+      display: block;
+      margin-top: 20px;
+      margin-bottom: 6px;
+      font-weight: bold;
+      color: #555;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 12px;
+      min-height: 80px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      resize: vertical;
+      font-size: 1em;
+      background-color: #fefefe;
+      transition: border 0.3s;
+    }
+
+    textarea:focus {
+      border-color: #4a90e2;
+      outline: none;
+    }
+
+    button {
+      margin-top: 30px;
+      padding: 12px 20px;
+      font-size: 1em;
+      background-color: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #357ab7;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+
+      textarea {
+        font-size: 0.95em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧠 LevelUp Journal</h1>
+    <a href="/entries" style="text-decoration:none; color:#4a90e2; font-weight:bold;">📘 View Past Entries</a>
+    
+    <form id="journalForm">
+      <label for="mood">🟢 Mood</label>
+      <textarea id="mood" name="mood" placeholder="How are you feeling today?"></textarea>
+
+      <label for="mind">🧠 Mindset</label>
+      <textarea id="mind" name="mind" placeholder="What's on your mind?"></textarea>
+
+      <label for="code">💻 Coding Progress</label>
+      <textarea id="code" name="code" placeholder="What did you learn or build today?"></textarea>
+
+      <label for="body">📓 Reflections</label>
+      <textarea id="body" name="body" placeholder="Any thoughts, reflections, or future plans?"></textarea>
+
+      <button type="submit">📌 Save Entry</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('journalForm').addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      const mood = document.getElementById('mood').value;
+      const mind = document.getElementById('mind').value;
+      const code = document.getElementById('code').value;
+      const body = document.getElementById('body').value;
+      const date = new Date().toLocaleDateString();
+
+      fetch('/submit', {
+        method: 'POST',
+        body: new URLSearchParams({
+          mood: mood,
+          mind: mind,
+          code: code,
+          body: body,
+          date: date
+        }),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          alert(data.message);
+          document.getElementById('journalForm').reset();
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    });
+  </script>
+</body>
+</html>

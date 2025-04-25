@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Entry</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f0f2f5;
+      margin: 0;
+      padding: 40px;
+    }
+    form {
+      background: white;
+      max-width: 600px;
+      margin: auto;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #4a90e2;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    textarea, input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      resize: vertical;
+    }
+    button {
+      margin-top: 20px;
+      background-color: #4a90e2;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    a {
+      display: block;
+      margin-top: 20px;
+      text-align: center;
+      color: #4a90e2;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <form action="{{ url_for('update_entry', entry_id=entry.id) }}" method="POST">
+    <h1>✏️ Edit Journal Entry</h1>
+    
+    <label for="mood">Mood:</label>
+    <textarea name="mood" id="mood" rows="2">{{ entry.mood }}</textarea>
+
+    <label for="mind">Mind:</label>
+    <textarea name="mind" id="mind" rows="3">{{ entry.mind }}</textarea>
+
+    <label for="code">Code Progress:</label>
+    <textarea name="code" id="code" rows="3">{{ entry.code }}</textarea>
+
+    <label for="body">Reflections:</label>
+    <textarea name="body" id="body" rows="5">{{ entry.body }}</textarea>
+
+    <label for="date">Date:</label>
+    <input type="text" name="date" id="date" value="{{ entry.date }}" required>
+
+    <button type="submit">Update Entry</button>
+    <a href="{{ url_for('show_entries') }}">← Back to Entries</a>
+  </form>
+</body>
+</html>
