@@ -1,3 +1,7 @@
+# Load version
+with open('version.txt', 'r') as f:
+    VERSION = f.read().strip()
+
 from flask import Flask, render_template, request, jsonify, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -24,7 +28,9 @@ with app.app_context():
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    now = datetime.now().strftime("%B %d, %Y")
+    return render_template('index.html', version=VERSION, now=now)
+
 
 @app.route('/submit', methods=['POST'])
 def submit_entry():
