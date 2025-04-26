@@ -1,3 +1,4 @@
+<!-- FINAL VERSION: edit.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,59 +6,124 @@
   <title>Edit Entry</title>
   <style>
     body {
-      font-family: sans-serif;
-      background: #f0f2f5;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0f0f0f;
+      color: #e0f7fa;
       margin: 0;
       padding: 40px;
+      overflow-x: hidden;
+      animation: fadeInBody 1s ease forwards;
     }
+
+    @keyframes fadeInBody {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
     form {
-      background: white;
+      background: rgba(18, 18, 18, 0.95);
       max-width: 600px;
       margin: auto;
       padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0, 188, 212, 0.3);
+      animation: slideIn 0.8s ease forwards;
     }
+
+    @keyframes slideIn {
+      from { transform: translateY(40px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
     h1 {
       text-align: center;
-      color: #4a90e2;
+      color: #00e5ff;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px #00e5ff;
     }
+
     label {
       display: block;
       margin-top: 15px;
       font-weight: bold;
+      color: #80cbc4;
     }
+
     textarea, input[type="text"] {
       width: 100%;
       padding: 10px;
       margin-top: 5px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
+      border-radius: 8px;
+      border: 1px solid #00bcd4;
+      background: #121212;
+      color: #e0f7fa;
       resize: vertical;
+      transition: border-color 0.3s;
     }
+
+    textarea:focus, input[type="text"]:focus {
+      border-color: #76ff03;
+      outline: none;
+    }
+
     button {
       margin-top: 20px;
-      background-color: #4a90e2;
+      background-color: #00bcd4;
       color: white;
-      padding: 10px 20px;
+      padding: 12px 20px;
       border: none;
       border-radius: 8px;
       font-size: 1rem;
       cursor: pointer;
+      width: 100%;
+      transition: transform 0.3s, background-color 0.3s;
     }
+
+    button:hover {
+      transform: scale(1.05);
+      background-color: #76ff03;
+    }
+
     a {
       display: block;
       margin-top: 20px;
       text-align: center;
-      color: #4a90e2;
+      color: #00e5ff;
       text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    a:hover {
+      color: #76ff03;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #00bcd4;
+      color: #ffffff;
+      padding: 15px 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      opacity: 0;
+      transform: translateX(100%);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      z-index: 1000;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(0);
     }
   </style>
 </head>
 <body>
+
   <form action="{{ url_for('update_entry', entry_id=entry.id) }}" method="POST">
     <h1>✏️ Edit Journal Entry</h1>
-    
+
     <label for="mood">Mood:</label>
     <textarea name="mood" id="mood" rows="2">{{ entry.mood }}</textarea>
 
@@ -76,5 +142,27 @@
     <button type="submit">Update Entry</button>
     <a href="{{ url_for('show_entries') }}">← Back to Entries</a>
   </form>
+
+  <!-- Toast -->
+  <div id="toast" class="toast">✅ Entry Updated Successfully!</div>
+
+  <!-- Sound -->
+  <audio id="success-sound" src="{{ url_for('static', filename='sounds/success.mp3') }}" preload="auto"></audio>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('updated') === 'true') {
+      const toast = document.getElementById('toast');
+      const sound = document.getElementById('success-sound');
+
+      toast.classList.add('show');
+      sound.play();
+
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+  </script>
+
 </body>
 </html>

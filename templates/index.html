@@ -1,140 +1,265 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>LevelUp Journal</title>
+  <meta charset="UTF-8">
+  <title>My Journal</title>
+
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f4f6f9;
-      color: #333;
+      background: #0f0f0f;
+      color: #e0f7fa;
       margin: 0;
-      padding: 20px;
+      padding: 40px;
+      overflow-x: hidden;
+      position: relative;
     }
 
-    .container {
-      max-width: 700px;
-      margin: auto;
-      background: #ffffff;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    #particles-js {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: #0f0f0f;
     }
 
     h1 {
       text-align: center;
+      font-size: 3rem;
+      color: #00e5ff;
+      text-shadow: 0 0 15px #00e5ff;
       margin-bottom: 30px;
-      font-size: 2em;
-      color: #4a90e2;
+      animation: fadeIn 1s ease forwards;
+    }
+
+    form {
+      background: rgba(18, 18, 18, 0.95);
+      max-width: 600px;
+      margin: auto;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 25px #00e5ff80;
+      animation: slideUp 1s ease forwards;
+      animation-fill-mode: forwards;
+      backdrop-filter: blur(10px);
+      transition: box-shadow 0.3s ease;
+    }
+
+    form:hover {
+      box-shadow: 0 0 35px #76ff0380, 0 0 60px #00e5ff60;
     }
 
     label {
       display: block;
-      margin-top: 20px;
-      margin-bottom: 6px;
+      margin-top: 15px;
       font-weight: bold;
-      color: #555;
+      color: #80cbc4;
     }
 
-    textarea {
+    textarea, input[type="text"] {
       width: 100%;
-      padding: 12px;
-      min-height: 80px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 8px;
+      border: 1px solid #00bcd4;
+      background: #121212;
+      color: #e0f7fa;
       resize: vertical;
-      font-size: 1em;
-      background-color: #fefefe;
-      transition: border 0.3s;
+      transition: border-color 0.3s, box-shadow 0.3s;
     }
 
-    textarea:focus {
-      border-color: #4a90e2;
+    textarea:focus, input[type="text"]:focus {
+      border-color: #76ff03;
+      box-shadow: 0 0 10px #76ff03;
       outline: none;
     }
 
     button {
-      margin-top: 30px;
-      padding: 12px 20px;
-      font-size: 1em;
-      background-color: #4a90e2;
+      margin-top: 20px;
+      background-color: #00bcd4;
       color: white;
+      padding: 12px 20px;
       border: none;
-      border-radius: 10px;
+      border-radius: 8px;
+      font-size: 1rem;
       cursor: pointer;
-      transition: background-color 0.3s;
+      width: 100%;
+      transition: transform 0.3s, background-color 0.3s;
     }
 
     button:hover {
-      background-color: #357ab7;
+      transform: scale(1.05);
+      background-color: #76ff03;
+      box-shadow: 0 0 15px #76ff03;
     }
 
-    @media (max-width: 600px) {
-      .container {
-        padding: 20px;
-      }
+    a {
+      display: block;
+      margin-top: 20px;
+      text-align: center;
+      color: #00e5ff;
+      text-decoration: none;
+      font-size: 1.1rem;
+    }
 
-      textarea {
-        font-size: 0.95em;
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #00bcd4;
+      color: #ffffff;
+      padding: 15px 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      opacity: 0;
+      transform: translateY(50px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      z-index: 999;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @keyframes fadeIn {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      0% {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+      60% {
+        opacity: 1;
+        transform: translateY(-10px);
+      }
+      100% {
+        transform: translateY(0);
       }
     }
   </style>
+
+  <!-- Particles.js CDN -->
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
 </head>
+
 <body>
-  <div class="container">
-    <h1>🧠 LevelUp Journal</h1>
-    <a href="/entries" style="text-decoration:none; color:#4a90e2; font-weight:bold;">📘 View Past Entries</a>
-    
-    <form id="journalForm">
-      <label for="mood">🟢 Mood</label>
-      <textarea id="mood" name="mood" placeholder="How are you feeling today?"></textarea>
+  <div id="particles-js"></div>
 
-      <label for="mind">🧠 Mindset</label>
-      <textarea id="mind" name="mind" placeholder="What's on your mind?"></textarea>
+  <h1>📝 Welcome to Your Journal</h1>
 
-      <label for="code">💻 Coding Progress</label>
-      <textarea id="code" name="code" placeholder="What did you learn or build today?"></textarea>
+  <form id="entryForm">
+    <label for="mood">Mood:</label>
+    <textarea name="mood" id="mood" rows="2" required></textarea>
 
-      <label for="body">📓 Reflections</label>
-      <textarea id="body" name="body" placeholder="Any thoughts, reflections, or future plans?"></textarea>
+    <label for="mind">Mind:</label>
+    <textarea name="mind" id="mind" rows="3" required></textarea>
 
-      <button type="submit">📌 Save Entry</button>
-    </form>
-  </div>
+    <label for="code">Code Progress:</label>
+    <textarea name="code" id="code" rows="3" required></textarea>
 
+    <label for="body">Reflections:</label>
+    <textarea name="body" id="body" rows="5" required></textarea>
+
+    <button type="submit">Save Entry</button>
+    <a href="{{ url_for('show_entries') }}">📖 View Past Entries</a>
+  </form>
+
+  <!-- Toast -->
+  <div id="toast" class="toast">✅ Entry Saved Successfully!</div>
+
+  <!-- Sound -->
+  <audio id="success-sound" src="{{ url_for('static', filename='sounds/success.mp3') }}" preload="auto"></audio>
+
+  <!-- Form submit logic -->
   <script>
-    document.getElementById('journalForm').addEventListener('submit', function (event) {
-      event.preventDefault();
+    const form = document.getElementById('entryForm');
+    const toast = document.getElementById('toast');
+    const sound = document.getElementById('success-sound');
 
-      const mood = document.getElementById('mood').value;
-      const mind = document.getElementById('mind').value;
-      const code = document.getElementById('code').value;
-      const body = document.getElementById('body').value;
-      const date = new Date().toLocaleDateString();
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
 
-      fetch('/submit', {
+      const response = await fetch('/submit', {
         method: 'POST',
-        body: new URLSearchParams({
-          mood: mood,
-          mind: mind,
-          code: code,
-          body: body,
-          date: date
-        }),
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        }
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          alert(data.message);
-          document.getElementById('journalForm').reset();
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-        });
+        body: formData
+      });
+
+      if (response.ok) {
+        toast.classList.add('show');
+        sound.play();
+        form.reset();
+
+        setTimeout(() => {
+          toast.classList.remove('show');
+        }, 3000);
+      } else {
+        alert('❌ Failed to save entry. Please fill all fields!');
+      }
     });
   </script>
+
+  <!-- Particles Background Setup -->
+  <script>
+    particlesJS('particles-js', {
+      "particles": {
+        "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+        "color": { "value": "#00e5ff" },
+        "shape": {
+          "type": "circle",
+          "stroke": { "width": 0, "color": "#000" }
+        },
+        "opacity": { "value": 0.5 },
+        "size": { "value": 3, "random": true },
+        "line_linked": {
+          "enable": true,
+          "distance": 150,
+          "color": "#00e5ff",
+          "opacity": 0.4,
+          "width": 1
+        },
+        "move": {
+          "enable": true,
+          "speed": 2,
+          "direction": "none",
+          "random": false,
+          "straight": false,
+          "out_mode": "out",
+          "bounce": false
+        }
+      },
+      "interactivity": {
+        "detect_on": "canvas",
+        "events": {
+          "onhover": { "enable": true, "mode": "grab" },
+          "onclick": { "enable": true, "mode": "repulse" }, /* explode on click */
+          "resize": true
+        },
+        "modes": {
+          "grab": { "distance": 200, "line_linked": { "opacity": 0.8 } },
+          "repulse": { "distance": 200, "duration": 0.4 }
+        }
+      },
+      "retina_detect": true
+    });
+  </script>
+
+  <!-- Parallax Effect on Mouse Move -->
+  <script>
+    document.addEventListener('mousemove', e => {
+      const x = (e.clientX / window.innerWidth) - 0.5;
+      const y = (e.clientY / window.innerHeight) - 0.5;
+      document.getElementById('particles-js').style.transform = `translate(${x * 30}px, ${y * 30}px)`;
+    });
+  </script>
+
 </body>
 </html>

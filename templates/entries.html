@@ -3,61 +3,106 @@
 <head>
   <meta charset="UTF-8">
   <title>Your Journal Entries</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      font-family: sans-serif;
-      background: #f8f9fb;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0f0f0f;
+      color: #e0f7fa;
       margin: 0;
       padding: 30px;
+      overflow-x: hidden;
     }
-    .entry {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.07);
-    }
-    h2 {
-      color: #4a90e2;
-      margin-top: 0;
-    }
-    p {
-      margin: 5px 0 10px;
-    }
-    .date {
-      color: #888;
-      font-size: 0.9em;
-      text-align: right;
-    }
+
     a {
       display: inline-block;
       margin-bottom: 20px;
       text-decoration: none;
-      color: #4a90e2;
+      color: #00bcd4;
       font-weight: bold;
+      transition: color 0.3s;
     }
+
+    a:hover {
+      color: #76ff03;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      color: #00e5ff;
+      text-shadow: 0 0 10px #00e5ff;
+    }
+
+    .entry {
+      background: rgba(18, 18, 18, 0.95);
+      border: 1px solid #00bcd4;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 30px;
+      box-shadow: 0 0 20px rgba(0, 188, 212, 0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      opacity: 0;
+      animation: fadeIn 0.8s ease forwards;
+    }
+
+    .entry:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+    }
+
+    .date {
+      color: #80cbc4;
+      font-size: 0.85em;
+      text-align: right;
+      margin-top: 10px;
+    }
+
+    p {
+      margin: 8px 0;
+      line-height: 1.6;
+    }
+
     .actions {
       margin-top: 15px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
     }
-    .actions a, .actions form {
-      display: inline-block;
-      margin-right: 10px;
-    }
-    .actions form {
-      display: inline;
-    }
+
     .btn {
-      background: #4a90e2;
-      color: white;
-      padding: 6px 12px;
-      border-radius: 6px;
+      padding: 8px 15px;
       border: none;
-      font-size: 0.9em;
-      cursor: pointer;
+      border-radius: 8px;
+      color: white;
       text-decoration: none;
+      text-align: center;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: transform 0.3s, background-color 0.3s;
     }
+
+    .btn:hover {
+      transform: scale(1.05);
+    }
+
+    .btn.edit {
+      background-color: #4caf50;
+    }
+
     .btn.delete {
-      background: #e74c3c;
+      background-color: #f44336;
+    }
+
+    @keyframes fadeIn {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
     }
   </style>
 </head>
@@ -75,8 +120,8 @@
       <div class="date">Entry ID: {{ entry.id }}</div>
 
       <div class="actions">
-        <a class="btn" href="{{ url_for('edit_entry', entry_id=entry.id) }}">Edit</a>
-        <form method="POST" action="{{ url_for('delete_entry', entry_id=entry.id) }}">
+        <a class="btn edit" href="{{ url_for('edit_entry', entry_id=entry.id) }}">Edit</a>
+        <form method="POST" action="{{ url_for('delete_entry', entry_id=entry.id) }}" style="display:inline;">
           <button class="btn delete" type="submit" onclick="return confirm('Are you sure you want to delete this entry?');">Delete</button>
         </form>
       </div>
