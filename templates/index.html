@@ -42,7 +42,6 @@
       border-radius: 20px;
       box-shadow: 0 0 25px #00e5ff80;
       animation: slideUp 1s ease forwards;
-      animation-fill-mode: forwards;
       backdrop-filter: blur(10px);
       transition: box-shadow 0.3s ease;
     }
@@ -95,13 +94,18 @@
       box-shadow: 0 0 15px #76ff03;
     }
 
-    a {
+    a.view-entries {
       display: block;
-      margin-top: 20px;
+      margin: 30px auto 0;
       text-align: center;
       color: #00e5ff;
       text-decoration: none;
-      font-size: 1.1rem;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    a.view-entries:hover {
+      color: #76ff03;
     }
 
     /* Toast Notification */
@@ -147,7 +151,6 @@
 
   <!-- Particles.js CDN -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-
 </head>
 
 <body>
@@ -155,22 +158,25 @@
 
   <h1>📝 Welcome to Your Journal</h1>
 
-  <form id="entryForm">
+  <form id="journal-form" method="POST" action="/submit">
     <label for="mood">Mood:</label>
-    <textarea name="mood" id="mood" rows="2" required></textarea>
+    <textarea id="mood" name="mood" rows="2" required></textarea>
 
     <label for="mind">Mind:</label>
-    <textarea name="mind" id="mind" rows="3" required></textarea>
+    <textarea id="mind" name="mind" rows="3" required></textarea>
 
     <label for="code">Code Progress:</label>
-    <textarea name="code" id="code" rows="3" required></textarea>
+    <textarea id="code" name="code" rows="3" required></textarea>
 
     <label for="body">Reflections:</label>
-    <textarea name="body" id="body" rows="5" required></textarea>
+    <textarea id="body" name="body" rows="5" required></textarea>
 
     <button type="submit">Save Entry</button>
-    <a href="{{ url_for('show_entries') }}">📖 View Past Entries</a>
+    <button type="button" onclick="suggestReflection()">✨ Suggest Reflection</button>
   </form>
+
+  <!-- View Past Entries Button -->
+  <a href="/entries" class="view-entries">📜 View Past Entries</a>
 
   <!-- Toast -->
   <div id="toast" class="toast">✅ Entry Saved Successfully!</div>
@@ -178,9 +184,94 @@
   <!-- Sound -->
   <audio id="success-sound" src="{{ url_for('static', filename='sounds/success.mp3') }}" preload="auto"></audio>
 
-  <!-- Form submit logic -->
+ <!-- Suggest Reflection Logic -->
+<script>
+  function suggestReflection() {
+    const mood = document.getElementById('mood').value.toLowerCase();
+    const mind = document.getElementById('mind').value.toLowerCase();
+
+    let suggestion = '';
+
+    // Mood and Thought Mapping for Suggestions
+    const suggestions = {
+      'stressed': "Remember that clarity comes through action, not overthinking.",
+      'overthinking': "Clarity comes through action, not endless thought. Take a step forward.",
+      'happy': "Hold onto this feeling of gratitude — it fuels resilience.",
+      'grateful': "Gratitude strengthens your mind. Let it be your source of power.",
+      'tired': "Rest is productive too. Recharge to come back stronger.",
+      'burnout': "Slow down. Your well-being is the foundation of everything you do.",
+      'angry': "Anger fades with calmness. Take a moment to breathe and reflect.",
+      'frustrated': "Challenges build strength. Keep moving, but at your own pace.",
+      'anxious': "Fear is temporary, but your strength is enduring. Stay grounded.",
+      'optimistic': "Your positive outlook is your superpower. Keep believing.",
+      'hopeful': "Hope is the foundation of resilience. Let it guide you through.",
+      'sad': "It's okay to feel down. Take it one step at a time. Healing is a journey.",
+      'lonely': "You are never truly alone. Reach out, and you'll find connection.",
+      'confused': "Clarity comes when you pause and listen to your inner voice.",
+      'indecisive': "It's okay not to have all the answers right away. Trust the process.",
+      'calm': "Peace comes from within. Embrace the stillness around you.",
+      'relaxed': "Enjoy the serenity. You've earned this moment of peace.",
+      'motivated': "Keep the momentum going. Your efforts are moving you forward.",
+      'focused': "Your focus is your strength. Use it to unlock your potential.",
+      'creative': "Embrace the flow of ideas. Let your creativity guide your path.",
+      'inspired': "Let inspiration fuel your next step forward. You’re on the right track.",
+      'confident': "Confidence is built from small victories. Keep going!",
+      'discouraged': "Remember, setbacks are stepping stones to success. Keep going.",
+      'content': "Contentment is a sign of inner peace. Appreciate where you are.",
+      'excited': "Channel this energy into your goals. Great things are ahead.",
+      'embarrassed': "Everyone has their moments. It’s a part of growing and learning.",
+      'guilty': "Forgive yourself and learn from the experience. Growth comes from within.",
+      'regretful': "Regret is a teacher. Use it to guide better choices moving forward.",
+      'nervous': "Nervousness is just energy waiting to be focused. Channel it wisely.",
+      'fearful': "Fear is an illusion. Confront it, and you'll find your strength.",
+      'bored': "Boredom is a call to create something new. What do you want to explore?",
+      'hopeful': "Hope is the foundation of resilience. Let it guide you through.",
+      // Add more moods and thoughts as needed...
+    };
+
+    // Default suggestion pool - random selection from these
+    const defaultSuggestions = [
+      "Every day is a new opportunity to grow.",
+      "Take a deep breath and trust the process.",
+      "The journey is just as important as the destination.",
+      "Small steps lead to big changes. Keep going.",
+      "Embrace the challenges, for they shape your strength.",
+      "You are capable of more than you realize.",
+      "Take things one day at a time, and you’ll find clarity.",
+      "Success is built on consistency, not perfection.",
+      "Growth happens outside of your comfort zone.",
+      "The best time to start is now.",
+      "Patience is a form of strength. Trust the timing of your life.",
+      "The only limits that exist are the ones you place on yourself.",
+      "Focus on the present moment, and the future will take care of itself.",
+      "Believe in yourself, even when others don’t.",
+      "Challenges are opportunities in disguise.",
+      "The power to change your life is within you.",
+      "Progress may be slow, but it's still progress.",
+      "Your thoughts shape your reality. Choose them wisely.",
+      "Happiness is a choice, not a result.",
+      "Let go of what no longer serves you, and make room for growth."
+    ];
+
+    // Select a random default suggestion if no mood or mind matches
+    suggestion = defaultSuggestions[Math.floor(Math.random() * defaultSuggestions.length)];
+
+    // Check mood and mind values against the suggestions
+    for (const key in suggestions) {
+      if (mood.includes(key) || mind.includes(key)) {
+        suggestion = suggestions[key];
+        break;
+      }
+    }
+
+    // Output the suggestion
+    document.getElementById('body').value += "\n\n" + suggestion;
+  }
+</script>
+
+  <!-- Form Submit Logic -->
   <script>
-    const form = document.getElementById('entryForm');
+    const form = document.getElementById('journal-form');
     const toast = document.getElementById('toast');
     const sound = document.getElementById('success-sound');
 
@@ -240,7 +331,7 @@
         "detect_on": "canvas",
         "events": {
           "onhover": { "enable": true, "mode": "grab" },
-          "onclick": { "enable": true, "mode": "repulse" }, /* explode on click */
+          "onclick": { "enable": true, "mode": "repulse" },
           "resize": true
         },
         "modes": {
@@ -252,17 +343,18 @@
     });
   </script>
 
-  <!-- Parallax Effect on Mouse Move -->
+  <!-- Parallax Effect -->
   <script>
     document.addEventListener('mousemove', e => {
       const x = (e.clientX / window.innerWidth) - 0.5;
       const y = (e.clientY / window.innerHeight) - 0.5;
-      document.getElementById('particles-js').style.transform = `translate(${x * 30}px, ${y * 30}px)`;
+      document.getElementById('particles-js').style.transform = translate(${x * 30}px, ${y * 30}px);
     });
   </script>
-<footer style="text-align:center; color:#00e5ff; margin-top:40px; font-size: 0.9rem;">
-  🚀 Version: {{ version }} | Last Updated: {{ now }}
-</footer>
+
+  <footer style="text-align:center; color:#00e5ff; margin-top:40px; font-size: 0.9rem;">
+    🚀 Version: {{ version }} | Last Updated: {{ now }}
+  </footer>
 
 </body>
 </html>
