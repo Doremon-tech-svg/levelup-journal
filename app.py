@@ -42,7 +42,14 @@ with app.app_context():
 # Routes
 @app.route('/')
 def index():
-    now = datetime.now().strftime("%B %d, %Y")
+    # Get last entry date instead of "today"
+    last_entry = JournalEntry.query.order_by(JournalEntry.id.desc()).first()
+
+    if last_entry:
+        now = datetime.strptime(last_entry.date, "%m/%d/%Y").strftime("%B %d, %Y")
+    else:
+        now = datetime.now().strftime("%B %d, %Y")
+
     return render_template('index.html', version=VERSION, now=now)
 
 @app.route('/submit', methods=['POST'])
@@ -93,13 +100,14 @@ def edit_entry(entry_id):
 @app.route('/update/<int:entry_id>', methods=['POST'])
 def update_entry(entry_id):
     entry = JournalEntry.query.get_or_404(entry_id)
+
     mood = request.form.get('mood', '').strip()
     mind = request.form.get('mind', '').strip()
     code = request.form.get('code', '').strip()
     body = request.form.get('body', '').strip()
     date = request.form.get('date', '').strip()
 
-    if not all([mood, mind, code, body, date]):
+    if not all([mood, mind, code, body]):
         logger.warning("Missing fields during update.")
         return redirect(url_for('edit_entry', entry_id=entry_id))
 
@@ -107,7 +115,10 @@ def update_entry(entry_id):
     entry.mind = mind
     entry.code = code
     entry.body = body
-    entry.date = date
+
+    # Only update date if user actually sent one
+    if date:
+        entry.date = date
 
     try:
         db.session.commit()
